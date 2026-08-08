@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.service.annotation.GetExchange;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController
@@ -28,5 +30,11 @@ public class UserController
     public UserResponseDTO getUserById(@PathVariable Long id)
     {
         return userService.getUserById(id);
+    }
+
+    @GetMapping
+    public List<UserResponseDTO> getAllUsers()
+    {
+        return userService.getAllUsers();
     }
 }

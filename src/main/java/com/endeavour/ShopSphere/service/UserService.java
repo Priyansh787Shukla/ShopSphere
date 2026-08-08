@@ -9,6 +9,8 @@ import com.endeavour.ShopSphere.exception.UserNotFoundException;
 import com.endeavour.ShopSphere.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService
 {
@@ -42,5 +44,12 @@ public class UserService
         User user = userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User Not Found"));
 
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt());
+    }
+
+
+    public List<UserResponseDTO> getAllUsers()
+    {
+        return userRepository.findAll().stream().map(user-> new UserResponseDTO(user.getId(),
+                user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt())).toList();
     }
 }
