@@ -1,5 +1,6 @@
 package com.endeavour.ShopSphere.controller;
 
+import com.endeavour.ShopSphere.dto.UserRequestDTO;
 import com.endeavour.ShopSphere.dto.UserResponseDTO;
 import com.endeavour.ShopSphere.entity.User;
 import com.endeavour.ShopSphere.service.UserService;
@@ -20,8 +21,8 @@ public class UserController
     }
 
     @PostMapping
-    public UserResponseDTO createUser(@Valid @RequestBody User user)
+    public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO userRequest)
     {
-        return userService.createUser(user);
+        return userService.createUser(userRequest);
     }
 }
