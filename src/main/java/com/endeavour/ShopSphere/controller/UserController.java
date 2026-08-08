@@ -5,6 +5,7 @@ import com.endeavour.ShopSphere.dto.UserResponseDTO;
 import com.endeavour.ShopSphere.entity.User;
 import com.endeavour.ShopSphere.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.service.annotation.GetExchange;
 
@@ -36,5 +37,11 @@ public class UserController
     public List<UserResponseDTO> getAllUsers()
     {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/csrf")
+    public CsrfToken getToken(CsrfToken csrfToken)
+    {
+        return csrfToken;
     }
 }

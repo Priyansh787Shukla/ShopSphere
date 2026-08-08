@@ -7,6 +7,7 @@ import com.endeavour.ShopSphere.entity.User;
 import com.endeavour.ShopSphere.exception.EmailAlreadyExistsException;
 import com.endeavour.ShopSphere.exception.UserNotFoundException;
 import com.endeavour.ShopSphere.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +16,10 @@ import java.util.List;
 public class UserService
 {
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository)
+    private final PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository,  PasswordEncoder passwordEncoder)
     {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -29,7 +32,7 @@ public class UserService
         User user = new User();
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setRole(Role.CUSTOMER);
 
         User savedUser = userRepository.save(user);
