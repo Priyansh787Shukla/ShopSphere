@@ -4,6 +4,8 @@ import com.endeavour.ShopSphere.dto.UserRequestDTO;
 import com.endeavour.ShopSphere.dto.UserResponseDTO;
 import com.endeavour.ShopSphere.entity.Role;
 import com.endeavour.ShopSphere.entity.User;
+import com.endeavour.ShopSphere.exception.EmailAlreadyExistsException;
+import com.endeavour.ShopSphere.exception.UserNotFoundException;
 import com.endeavour.ShopSphere.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,11 @@ public class UserService
         this.userRepository = userRepository;
     }
 
+
     public UserResponseDTO createUser(UserRequestDTO userRequest)
     {
         if(userRepository.findByEmail(userRequest.getEmail()).isPresent())
-            throw new RuntimeException("Email already registered");
+            throw new EmailAlreadyExistsException("Email already registered");
 
         User user = new User();
         user.setName(userRequest.getName());
@@ -31,5 +34,13 @@ public class UserService
 
         return new UserResponseDTO(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
                 savedUser.getRole(), savedUser.getCreatedAt());
+    }
+
+
+    public UserResponseDTO getUserById(Long id)
+    {
+        User user = userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User Not Found"));
+
+        return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole(), user.getCreatedAt());
     }
 }

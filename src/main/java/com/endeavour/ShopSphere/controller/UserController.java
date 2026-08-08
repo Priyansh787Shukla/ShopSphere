@@ -5,10 +5,8 @@ import com.endeavour.ShopSphere.dto.UserResponseDTO;
 import com.endeavour.ShopSphere.entity.User;
 import com.endeavour.ShopSphere.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.service.annotation.GetExchange;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,5 +22,11 @@ public class UserController
     public UserResponseDTO createUser(@Valid @RequestBody UserRequestDTO userRequest)
     {
         return userService.createUser(userRequest);
+    }
+
+    @GetMapping
+    public UserResponseDTO getUserById(@RequestParam Long id)
+    {
+        return userService.getUserById(id);
     }
 }
