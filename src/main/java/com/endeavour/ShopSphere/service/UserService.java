@@ -18,6 +18,9 @@ public class UserService
 
     public UserResponseDTO createUser(UserRequestDTO userRequest)
     {
+        if(userRepository.findByEmail(userRequest.getEmail()).isPresent())
+            throw new RuntimeException("Email already registered");
+
         User user = new User();
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
