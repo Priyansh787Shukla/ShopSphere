@@ -5,6 +5,8 @@ import com.endeavour.ShopSphere.dto.ProductResponseDTO;
 import com.endeavour.ShopSphere.entity.Product;
 import com.endeavour.ShopSphere.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,20 +22,33 @@ public class ProductController
     }
 
     @PostMapping
-    public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequest)
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequest)
     {
-        return productService.createProduct(productRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productRequest));
     }
 
     @GetMapping
-    public List<ProductResponseDTO> getAllProducts()
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts()
     {
-        return productService.getAllProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ProductResponseDTO getProductById(@PathVariable Long id)
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id)
     {
-        return productService.getProductById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO productRequest)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productRequest));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteById(@PathVariable Long id)
+    {
+        productService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Product Deleted Successfully");
     }
 }
