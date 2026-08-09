@@ -6,9 +6,12 @@ import com.endeavour.ShopSphere.entity.Category;
 import com.endeavour.ShopSphere.entity.Product;
 import com.endeavour.ShopSphere.exception.CategoryNotFoundException;
 import com.endeavour.ShopSphere.exception.ProductAlreadyExistsException;
+import com.endeavour.ShopSphere.exception.ProductNotFoundException;
 import com.endeavour.ShopSphere.repository.CategoryRepository;
 import com.endeavour.ShopSphere.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductService
@@ -38,6 +41,23 @@ public class ProductService
         product.setCategory(category);
 
         productRepository.save(product);
+
+        return new ProductResponseDTO(product.getId(), product.getName(), product.getPrice(), product.getStock(),
+                product.getDescription(), product.getCategory().getId(), product.getCategory().getName());
+    }
+
+    public List<ProductResponseDTO> getAllProducts()
+    {
+        return productRepository.findAll()
+                .stream().map(product -> new ProductResponseDTO(product.getId(), product.getName(),
+                        product.getPrice(), product.getStock(), product.getDescription(),
+                        product.getCategory().getId(), product.getCategory().getName())).toList();
+    }
+
+    public ProductResponseDTO getProductById(Long id)
+    {
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new ProductNotFoundException("Product Does Not Exist"));
 
         return new ProductResponseDTO(product.getId(), product.getName(), product.getPrice(), product.getStock(),
                 product.getDescription(), product.getCategory().getId(), product.getCategory().getName());
