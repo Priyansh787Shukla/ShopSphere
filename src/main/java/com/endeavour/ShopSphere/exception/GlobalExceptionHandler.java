@@ -39,4 +39,10 @@ public class GlobalExceptionHandler
     {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    public ResponseEntity<String> handleProductAlreadyExistsException(ProductAlreadyExistsException ex)
+    {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

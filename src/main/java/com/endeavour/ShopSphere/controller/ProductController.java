@@ -1,5 +1,7 @@
 package com.endeavour.ShopSphere.controller;
 
+import com.endeavour.ShopSphere.dto.ProductRequestDTO;
+import com.endeavour.ShopSphere.dto.ProductResponseDTO;
 import com.endeavour.ShopSphere.entity.Product;
 import com.endeavour.ShopSphere.service.ProductService;
 import jakarta.validation.Valid;
@@ -19,8 +21,8 @@ public class ProductController
     }
 
     @PostMapping
-    public Product createProduct(@Valid @RequestBody Product product)
+    public ProductResponseDTO createProduct(@Valid @RequestBody ProductRequestDTO productRequest)
     {
-        return productService.createProduct(product);
+        return productService.createProduct(productRequest);
     }
 }

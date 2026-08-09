@@ -23,7 +23,7 @@ public class Product
     private Long id;
 
     @NotBlank
-    @Column(nullable=false)
+    @Column(nullable=false, unique=true) //we're keeping the product names unique for now
     private String name;
 
     @NotNull
