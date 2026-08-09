@@ -71,7 +71,7 @@ public class ProductService
                 .orElseThrow(()->new CategoryNotFoundException("Category not found"));
 
         if(!(product.getName().equals(productRequest.getName())) && productRepository.existsByName(productRequest.getName()))
-            throw new ProductAlreadyExistsException("Product Already Exists");
+            throw new ProductAlreadyExistsException("Product with the Same Name Already Exists");
 
         product.setName(productRequest.getName());
         product.setPrice(productRequest.getPrice());

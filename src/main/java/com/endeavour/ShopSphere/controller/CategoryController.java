@@ -4,6 +4,8 @@ import com.endeavour.ShopSphere.entity.Category;
 import com.endeavour.ShopSphere.repository.CategoryRepository;
 import com.endeavour.ShopSphere.service.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,20 +21,33 @@ public class CategoryController
     }
 
     @PostMapping
-    public Category createCategory(@Valid @RequestBody Category category)
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category)
     {
-        return categoryService.createCategory(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(category));
     }
 
     @GetMapping
-    public List<Category> getAllCategories()
+    public ResponseEntity<List<Category>> getAllCategories()
     {
-        return categoryService.getAllCategories();
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable Long id)
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id)
     {
-        return categoryService.getCategoryById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @Valid @RequestBody Category categoryRequest)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategory(id, categoryRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategoryById(@PathVariable Long id)
+    {
+        categoryService.deleteCategoryById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Category Deleted");
     }
 }
