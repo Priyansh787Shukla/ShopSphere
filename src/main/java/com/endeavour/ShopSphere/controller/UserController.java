@@ -5,6 +5,8 @@ import com.endeavour.ShopSphere.dto.UserResponseDTO;
 import com.endeavour.ShopSphere.entity.User;
 import com.endeavour.ShopSphere.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.service.annotation.GetExchange;
@@ -37,6 +39,19 @@ public class UserController
     public List<UserResponseDTO> getAllUsers()
     {
         return userService.getAllUsers();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequest)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, userRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id)
+    {
+        userService.deleteUserById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User Deleted Successfully");
     }
 
     @GetMapping("/csrf")
