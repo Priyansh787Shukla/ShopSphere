@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long>
 {
-    public Boolean existsByName(String name);
+    Boolean existsByName(String name);
 }
