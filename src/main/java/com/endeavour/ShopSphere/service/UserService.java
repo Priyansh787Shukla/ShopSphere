@@ -27,7 +27,7 @@ public class UserService
 
     public UserResponseDTO createUser(UserRequestDTO userRequest)
     {
-        if(userRepository.findByEmail(userRequest.getEmail()))
+        if(userRepository.existsByEmail(userRequest.getEmail()))
             throw new UserAlreadyExistsException("Email already registered");
 
         User user = new User();
@@ -61,7 +61,7 @@ public class UserService
     {
         User user = userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User Not Found"));
 
-        if(!(user.getEmail().equals(userRequest.getEmail())) && userRepository.findByEmail(userRequest.getEmail()))
+        if(!(user.getEmail().equals(userRequest.getEmail())) && userRepository.existsByEmail(userRequest.getEmail()))
             throw new UserAlreadyExistsException("Email already registered");
 
         user.setName(userRequest.getName());

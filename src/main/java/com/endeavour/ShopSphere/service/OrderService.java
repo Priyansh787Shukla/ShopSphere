@@ -3,10 +3,7 @@ package com.endeavour.ShopSphere.service;
 import com.endeavour.ShopSphere.dto.OrderRequestDTO;
 import com.endeavour.ShopSphere.dto.OrderResponseDTO;
 import com.endeavour.ShopSphere.entity.*;
-import com.endeavour.ShopSphere.exception.CartIsEmptyException;
-import com.endeavour.ShopSphere.exception.CartNotFoundException;
-import com.endeavour.ShopSphere.exception.OrderNotFoundException;
-import com.endeavour.ShopSphere.exception.UserNotFoundException;
+import com.endeavour.ShopSphere.exception.*;
 import com.endeavour.ShopSphere.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -53,12 +50,20 @@ public class OrderService
         Order savedOrder = orderRepository.save(order);
         for(CartItem item : items)
         {
+            if (item.getProduct().getStock() < item.getQuantity())
+            {
+                throw new InsufficientStockException("Insufficient stock for product: "+item.getProduct().getName());
+            }
+
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
             orderItem.setProduct(item.getProduct());
             orderItem.setQuantity(item.getQuantity());
             orderItem.setPrice(item.getProduct().getPrice());
-            orderItemRepository.save(orderItem);
+            orderItemRepository.save(orderItem); //redundant here becz @transactional is used
+
+            Product product = item.getProduct();
+            product.setStock(product.getStock() - item.getQuantity());
         }
         cartItemRepository.deleteAll(items);
         return new OrderResponseDTO(savedOrder.getId(), savedOrder.getUser().getId(), savedOrder.getAmount(),

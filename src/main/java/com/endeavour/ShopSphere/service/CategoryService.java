@@ -36,7 +36,7 @@ public class CategoryService
         return categoryRepository.findById(id).orElseThrow(()->new CategoryNotFoundException("Category Not Found"));
     }
 
-    public Category updateCategory(Long id, @Valid Category categoryRequest)
+    public Category updateCategory(Long id, Category categoryRequest)
     {
         Category category = categoryRepository.findById(id).orElseThrow(()->new CategoryNotFoundException("Category Not Found"));
 
