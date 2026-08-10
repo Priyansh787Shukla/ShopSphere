@@ -87,4 +87,14 @@ public class OrderService
                 ))
                 .toList();
     }
+
+    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus status)
+    {
+        Order order = orderRepository.findById(orderId).orElseThrow(()->new OrderNotFoundException("Order not found"));
+        order.setStatus(status);
+        Order savedOrder = orderRepository.save(order);
+
+        return new OrderResponseDTO(savedOrder.getId(), savedOrder.getUser().getId(),
+                savedOrder.getAmount(), savedOrder.getStatus(), savedOrder.getCreatedAt());
+    }
 }

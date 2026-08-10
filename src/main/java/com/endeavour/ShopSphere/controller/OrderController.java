@@ -2,6 +2,7 @@ package com.endeavour.ShopSphere.controller;
 
 import com.endeavour.ShopSphere.dto.OrderRequestDTO;
 import com.endeavour.ShopSphere.dto.OrderResponseDTO;
+import com.endeavour.ShopSphere.entity.OrderStatus;
 import com.endeavour.ShopSphere.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -36,5 +37,11 @@ public class OrderController
     public ResponseEntity<List<OrderResponseDTO>> getOrdersByUserId(@PathVariable Long userId)
     {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByUserId(userId));
+    }
+
+    @PutMapping("/{orderId}/status")
+    public OrderResponseDTO updateOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus status)
+    {
+        return orderService.updateOrderStatus(orderId, status);
     }
 }
