@@ -1,6 +1,7 @@
 package com.endeavour.ShopSphere.controller;
 
 import com.endeavour.ShopSphere.dto.AddToCartRequestDTO;
+import com.endeavour.ShopSphere.dto.CartRequestDTO;
 import com.endeavour.ShopSphere.dto.CartResponseDTO;
 import com.endeavour.ShopSphere.entity.Cart;
 import com.endeavour.ShopSphere.entity.CartItem;
@@ -21,9 +22,9 @@ public class CartController
     }
 
     @PostMapping
-    public ResponseEntity<Cart> createCart(@Valid @RequestBody Cart cart)
+    public ResponseEntity<Cart> createCart(@Valid @RequestBody CartRequestDTO request)
     {
-        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.createCart(cart));
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.createCart(request));
     }
 
     @PostMapping("/{cartId}/items")
@@ -42,5 +43,12 @@ public class CartController
     public ResponseEntity<CartResponseDTO> getCartByUSerId(@PathVariable Long userId)
     {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.getCartByUserId(userId));
+    }
+
+    @DeleteMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<String> removeProductFromCart(@PathVariable Long cartId, @PathVariable Long prodouctId)
+    {
+        cartService.removeProductFromCart(cartId, prodouctId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Cart Items Removed");
     }
 }
