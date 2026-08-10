@@ -1,6 +1,8 @@
 package com.endeavour.ShopSphere.service;
 
 import com.endeavour.ShopSphere.dto.AddToCartRequestDTO;
+import com.endeavour.ShopSphere.dto.AddToCartResponseDTO;
+import com.endeavour.ShopSphere.dto.CartResponseDTO;
 import com.endeavour.ShopSphere.entity.Cart;
 import com.endeavour.ShopSphere.entity.CartItem;
 import com.endeavour.ShopSphere.entity.Product;
@@ -11,6 +13,7 @@ import com.endeavour.ShopSphere.repository.CartRepository;
 import com.endeavour.ShopSphere.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +51,27 @@ public class CartService
         cartItem.setProduct(product);
         cartItem.setQuantity(request.getQuantity());
         return cartItemRepository.save(cartItem);
+    }
+
+    public CartResponseDTO getCartById(Long cartId)
+    {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+        List<AddToCartResponseDTO> items = cartItemRepository
+                .findByCartId(cartId)
+                .stream()
+                .map(item -> new AddToCartResponseDTO(
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getProduct().getPrice(),
+                        item.getQuantity()
+                ))
+                .toList();
+        return new CartResponseDTO(cart.getId(), cart.getUser().getId(), items);
+    }
+
+    public CartResponseDTO getCartByUserId(Long userId)
+    {
+        Cart cart = cartRepository.findByUserId(userId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+        return getCartById(cart.getId());
     }
 }

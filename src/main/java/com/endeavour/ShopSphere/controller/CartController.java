@@ -1,6 +1,7 @@
 package com.endeavour.ShopSphere.controller;
 
 import com.endeavour.ShopSphere.dto.AddToCartRequestDTO;
+import com.endeavour.ShopSphere.dto.CartResponseDTO;
 import com.endeavour.ShopSphere.entity.Cart;
 import com.endeavour.ShopSphere.entity.CartItem;
 import com.endeavour.ShopSphere.service.CartService;
@@ -29,5 +30,17 @@ public class CartController
     public ResponseEntity<CartItem> addProductToCart(@PathVariable Long cartId, @Valid @RequestBody AddToCartRequestDTO cartItem)
     {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.addProductToCart(cartId, cartItem));
+    }
+
+    @GetMapping("/{cartId}")
+    public ResponseEntity<CartResponseDTO> getCartById(@PathVariable Long cartId)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getCartById(cartId));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CartResponseDTO> getCartByUSerId(@PathVariable Long userId)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getCartByUserId(userId));
     }
 }
