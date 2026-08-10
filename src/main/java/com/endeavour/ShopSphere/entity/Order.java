@@ -40,4 +40,10 @@ public class Order
 
     @OneToMany(mappedBy =  "order")
     private List<OrderItem> items;
+
+    @PrePersist
+    public void onCreate()
+    {
+        createdAt = LocalDateTime.now();
+    }
 }

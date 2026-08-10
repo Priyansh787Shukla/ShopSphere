@@ -50,7 +50,6 @@ public class OrderService
         order.setUser(user);
         order.setAmount(totalAmount);
         order.setStatus(OrderStatus.PLACED);
-        order.setCreatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
         for(CartItem item : items)
         {
