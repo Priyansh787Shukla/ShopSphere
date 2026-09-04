@@ -5,6 +5,9 @@ import com.endeavour.ShopSphere.dto.ProductResponseDTO;
 import com.endeavour.ShopSphere.entity.Product;
 import com.endeavour.ShopSphere.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +30,16 @@ public class ProductController
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productRequest));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts()
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponseDTO>> searchProducts(@RequestParam String name)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
+        return ResponseEntity.status(HttpStatus.OK).body(productService.searchProducts(name));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(@PageableDefault(size = 10, sort = "id") Pageable pageable)
+    {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts(pageable));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +54,7 @@ public class ProductController
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, productRequest));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id)
     {
         productService.deleteById(id);

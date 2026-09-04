@@ -32,10 +32,12 @@ public class OrderService
     }
 
     @Transactional
-    public OrderResponseDTO placeOrder(OrderRequestDTO request)
+    public OrderResponseDTO placeOrder(String email)
     {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(()->new UserNotFoundException("User Does Not Exist"));
-        Cart cart = cartRepository.findByUserId(request.getUserId()).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+        User user = userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User Does Not Exist"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+
         List<CartItem> items = cartItemRepository.findByCartId(cart.getId());
         if(items.isEmpty())
             throw new CartIsEmptyException("Cart is Empty");
@@ -70,17 +72,24 @@ public class OrderService
                 savedOrder.getStatus(), savedOrder.getCreatedAt());
     }
 
-    public OrderResponseDTO getOrderById(Long orderId)
+    public OrderResponseDTO getOrderById(String email, Long orderId)
     {
+        User user = userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User Does Not Exist"));
+
         Order order = orderRepository.findById(orderId).orElseThrow(()->new OrderNotFoundException("Order Not Found"));
+
+        if(!(order.getUser().getId().equals(user.getId())))
+            throw new OrderNotFoundException("Order Not Found");
+
         return new OrderResponseDTO(order.getId(), order.getUser().getId(),
                 order.getAmount(), order.getStatus(), order.getCreatedAt());
     }
 
-    public List<OrderResponseDTO> getOrdersByUserId(Long userId)
+    public List<OrderResponseDTO> getOrdersByUserId(String email)
     {
-        userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User not found"));
-        return orderRepository.findByUserId(userId)
+        User user = userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User not found"));
+
+        return orderRepository.findByUserId(user.getId())
                 .stream()
                 .map(order -> new OrderResponseDTO(
                         order.getId(),

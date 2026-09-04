@@ -87,4 +87,10 @@ public class GlobalExceptionHandler
     {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalCartAccessException.class)
+    public ResponseEntity<String> handleIllegalCartAccessException(IllegalCartAccessException ex)
+    {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
 }

@@ -1,7 +1,6 @@
 package com.endeavour.ShopSphere.controller;
 
 import com.endeavour.ShopSphere.entity.Category;
-import com.endeavour.ShopSphere.repository.CategoryRepository;
 import com.endeavour.ShopSphere.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

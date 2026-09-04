@@ -9,6 +9,8 @@ import com.endeavour.ShopSphere.exception.ProductAlreadyExistsException;
 import com.endeavour.ShopSphere.exception.ProductNotFoundException;
 import com.endeavour.ShopSphere.repository.CategoryRepository;
 import com.endeavour.ShopSphere.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,12 +48,18 @@ public class ProductService
                 product.getDescription(), product.getCategory().getId(), product.getCategory().getName());
     }
 
-    public List<ProductResponseDTO> getAllProducts()
+    public Page<ProductResponseDTO> getAllProducts(Pageable pageable)
     {
-        return productRepository.findAll()
-                .stream().map(product -> new ProductResponseDTO(product.getId(), product.getName(),
-                        product.getPrice(), product.getStock(), product.getDescription(),
-                        product.getCategory().getId(), product.getCategory().getName())).toList();
+        return productRepository.findAll(pageable)
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getDescription(),
+                        product.getCategory().getId(),
+                        product.getCategory().getName()
+                ));
     }
 
     public ProductResponseDTO getProductById(Long id)
@@ -91,5 +99,21 @@ public class ProductService
             throw new ProductNotFoundException("Product Does Not Exist");
 
         productRepository.deleteById(id);
+    }
+
+    public List<ProductResponseDTO> searchProducts(String name)
+    {
+        return productRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getDescription(),
+                        product.getCategory().getId(),
+                        product.getCategory().getName()
+                ))
+                .toList();
     }
 }

@@ -7,6 +7,7 @@ import com.endeavour.ShopSphere.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.service.annotation.GetExchange;
@@ -29,28 +30,29 @@ public class UserController
         return userService.createUser(userRequest);
     }
 
-    @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Long id)
-    {
-        return userService.getUserById(id);
-    }
-
     @GetMapping
-    public List<UserResponseDTO> getAllUsers()
+    public UserResponseDTO getUserById(Authentication authentication)
     {
-        return userService.getAllUsers();
+        return userService.getUserById(authentication.getName());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequest)
+    @GetMapping("/all")
+    public List<UserResponseDTO> getAllUsers(Authentication authentication)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserById(id, userRequest));
+        return userService.getAllUsers(authentication.getName());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id)
+    @PutMapping
+    public ResponseEntity<UserResponseDTO> updateUserById(Authentication authentication, @Valid @RequestBody UserRequestDTO userRequest)
     {
-        userService.deleteUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).
+                body(userService.updateUserById(authentication.getName(), userRequest));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteUserById(Authentication authentication)
+    {
+        userService.deleteUserById(authentication.getName());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User Deleted Successfully");
     }
 

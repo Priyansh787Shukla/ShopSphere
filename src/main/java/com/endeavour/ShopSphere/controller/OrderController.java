@@ -1,12 +1,11 @@
 package com.endeavour.ShopSphere.controller;
 
-import com.endeavour.ShopSphere.dto.OrderRequestDTO;
 import com.endeavour.ShopSphere.dto.OrderResponseDTO;
 import com.endeavour.ShopSphere.entity.OrderStatus;
 import com.endeavour.ShopSphere.service.OrderService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,21 +21,21 @@ public class OrderController
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> placeOrder(@Valid @RequestBody OrderRequestDTO request)
+    public ResponseEntity<OrderResponseDTO> placeOrder(Authentication authentication)
     {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.placeOrder(authentication.getName()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable long id)
+    public ResponseEntity<OrderResponseDTO> getOrder(Authentication authentication, @PathVariable long id)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrderById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrderById(authentication.getName(), id));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponseDTO>> getOrdersByUserId(@PathVariable Long userId)
+    @GetMapping("/user")
+    public ResponseEntity<List<OrderResponseDTO>> getOrdersByUser(Authentication authentication)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersByUserId(authentication.getName()));
     }
 
     @PutMapping("/{orderId}/status")

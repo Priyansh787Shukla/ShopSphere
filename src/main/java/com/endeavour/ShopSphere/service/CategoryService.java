@@ -4,7 +4,6 @@ import com.endeavour.ShopSphere.entity.Category;
 import com.endeavour.ShopSphere.exception.CategoryAlreadyExistsException;
 import com.endeavour.ShopSphere.exception.CategoryNotFoundException;
 import com.endeavour.ShopSphere.repository.CategoryRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

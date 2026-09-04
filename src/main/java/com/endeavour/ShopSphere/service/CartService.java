@@ -34,20 +34,28 @@ public class CartService
         this.userRepository = userRepository;
     }
 
-    public Cart createCart(CartRequestDTO request)
+    public Cart createCart(String email)
     {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
-        if(cartRepository.findByUserId(request.getUserId()).isPresent())
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if(cartRepository.findByUserId(user.getId()).isPresent())
             throw new CartAlreadyExistsException("User Already has a Cart");
+
         Cart cart = new Cart();
         cart.setUser(user);
+
         return cartRepository.save(cart);
     }
 
-    public CartItem addProductToCart(Long cartId, AddToCartRequestDTO request)
+    public CartItem addProductToCart(Long cartId, AddToCartRequestDTO request, String email)
     {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new CartNotFoundException("Cart Does Not Exist"));
+
+        if (!cart.getUser().getEmail().equals(email))
+            throw new IllegalCartAccessException("You cannot access this cart");
+
         Product product = productRepository.findById(request.getProductId()).orElseThrow(()->new ProductNotFoundException("Product Does Not Exist"));
+
         Optional<CartItem> existItem = cartItemRepository.findByCartIdAndProductId(cartId, request.getProductId());
         if(existItem.isPresent())
         {
@@ -62,9 +70,13 @@ public class CartService
         return cartItemRepository.save(cartItem);
     }
 
-    public CartResponseDTO getCartById(Long cartId)
+    public CartResponseDTO getCartById(Long cartId, String email)
     {
         Cart cart = cartRepository.findById(cartId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+
+        if (!cart.getUser().getEmail().equals(email))
+            throw new IllegalCartAccessException("You cannot access this cart");
+
         List<AddToCartResponseDTO> items = cartItemRepository
                 .findByCartId(cartId)
                 .stream()
@@ -78,16 +90,23 @@ public class CartService
         return new CartResponseDTO(cart.getId(), cart.getUser().getId(), items);
     }
 
-    public CartResponseDTO getCartByUserId(Long userId)
+    public CartResponseDTO getCartByUserId(String email)
     {
-        Cart cart = cartRepository.findByUserId(userId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
-        return getCartById(cart.getId());
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(() -> new CartNotFoundException("Cart Does Not Exist"));
+
+        return getCartById(cart.getId(), email);
     }
 
-    public void removeProductFromCart(Long cartId, Long productId)
+    public void removeProductFromCart(String email, Long productId)
     {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cartId, productId).orElseThrow(()->new CartItemNotFoundException("Product not in the cart"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(()->new CartNotFoundException("Cart Does Not Exist"));
+
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId).orElseThrow(()->new CartItemNotFoundException("Product not in the cart"));
+
         cartItemRepository.delete(cartItem);
     }
 }
