@@ -93,4 +93,16 @@ public class GlobalExceptionHandler
     {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<String> handleRefreshTokenExpiredException(RefreshTokenExpiredException ex)
+    {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<String> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex)
+    {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
 }

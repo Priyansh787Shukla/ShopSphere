@@ -84,7 +84,7 @@ public class SecurityConfig
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/oauth2/**", "/login/oauth2/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
